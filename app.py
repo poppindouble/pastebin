@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, make_response, jsonify
+
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -17,11 +18,17 @@ def create():
 		})
 	print(result.inserted_id)
 	return "response from create"
+
 @app.route("/all")
 def get_all():
 	cursor = db.datasets.find()
 	for document in cursor:
 		print(document)
 	return "all"
+
+@app.errorhandler(404)
+def not_found(error):
+	return make_response(jsonify({'error': 'Not found'}), 404)
+
 if __name__ == "__main__":
 	app.run(host='0.0.0.0', port=80)
