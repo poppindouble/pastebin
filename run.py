@@ -1,14 +1,13 @@
-from flask import Flask, make_response, jsonify
-
+from app import app
+from flask import make_response, jsonify
 from pymongo import MongoClient
 
-app = Flask(__name__)
 client = MongoClient()
 db = client["test_paste"]
 
 @app.route("/")
 def hello():
-	return "Hello World!"
+	return "Hello World!!!"
 
 @app.route("/create")
 def create():
@@ -31,4 +30,4 @@ def not_found(error):
 	return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == "__main__":
-	app.run(host='0.0.0.0', port=80)
+	app.run(debug=app.debug)

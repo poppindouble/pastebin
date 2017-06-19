@@ -1,13 +1,20 @@
 ## Setup
-### 1. Install virtualenv via pip (if you don't have virtualenv):
+### 1. Install virtualenv and virtualenvwrapper via pip (if you don't have):
 ```sh
 $ pip install virtualenv
+$ pip install virtualenvwrapper
 ```
-### 2. Activate virtualenv
+### 2. Configure virtualenv
 ```sh
-$ source pastebin/bin/activate
+$ export WORKON_HOME=~/Envs
+$ source /usr/local/bin/virtualenvwrapper.sh
 ```
-### 3. Install requirements
+### 3. Make virtualenv and activate it
+```sh
+$ mkvirtualenv pastebin-venv
+$ workon pastebin-venv
+```
+### 4. Install requirements
 ```sh
 $ pip install -r requirements.txt
 ```
@@ -15,8 +22,14 @@ $ pip install -r requirements.txt
 ## Run
 
 ```sh
-$ export FLASK_APP=app/app.py
+$ export FLASK_APP=run.py
+$ export FLASK_DEBUG=1
 $ flask run
+```
+### Or
+
+```sh
+$ python run.py
 ```
 
 ## Stop
