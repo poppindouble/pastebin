@@ -37,3 +37,6 @@ $ python run.py
 ctrl+c
 $ deactivate
 ```
+
+## Data Model
+![Data Model](data-model.png)
