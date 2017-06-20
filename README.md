@@ -40,3 +40,10 @@ $ deactivate
 
 ## Data Model
 ![Data Model](data-model.png)
+
+## Database Migration
+```sh
+$ python manage.py db init
+$ python manage.py db migrate
+$ python manage.py db upgrade
+```
