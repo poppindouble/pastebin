@@ -1,29 +1,32 @@
 from app import app
-from flask import make_response, jsonify
+from flask import make_response, jsonify, request
 from pymongo import MongoClient
+import datetime
+from hashlib import md5
 
 client = MongoClient()
 db = client["test_paste"]
 
 @app.route("/")
 def hello():
-	return "Hello World!!!"
+	return "Welcome to pastebin!"
 
-@app.route("/create")
-def create():
-	result = db.datasets.insert_one({
-		"content": "1",
-		"testing": "my 3 insert"
+@app.route("/api/v1/paste", methods=['POST'])
+def create_paste():
+	ip_address = request.remote_addr
+	time_stamp = datetime.datetime.now().strftime("%B %d, %Y")
+	hashUrl = md5(ip_address + time_stamp).digest().encode('base64')[:7]
+
+	return jsonify({
+		"url": hashUrl
 		})
-	print(result.inserted_id)
-	return "response from create"
 
-@app.route("/all")
-def get_all():
-	cursor = db.datasets.find()
-	for document in cursor:
-		print(document)
-	return "all"
+	# result = db.datasets.insert_one({
+	# 	"content": "1",
+	# 	"testing": "my 3 insert"
+	# 	})
+	# print(result.inserted_id)
+	# return "response from create"
 
 @app.errorhandler(404)
 def not_found(error):
