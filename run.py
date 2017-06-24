@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import datetime
 from hashlib import md5
 from app.models import Paste
+from bson.objectid import ObjectId
 
 client = MongoClient('localhost', 27017)
 mongodb = client["pastebin"]
@@ -18,21 +19,23 @@ def create_paste():
 	time_stamp = datetime.datetime.now().strftime("%B %d, %Y")
 	hashUrl = md5(ip_address + time_stamp).digest().encode('base64')[:7]
 	text_content = request.form['content']
-	# store to mongodb to get result.inseredid
 	result = mongodb["pastes"].insert_one({
 		"content": text_content
 		})
-	print(result.inserted_id)
-	try:
-		paste = Paste(hashUrl, 60, time_stamp, str(result.inserted_id))
-		db.session.add(paste)
-		db.session.commit()
-	except:
-		return make_response(jsonify({'error': 'Can not insert'}), 404)
+	if result.acknowledged:
+		try:
+			paste = Paste(hashUrl, 60, time_stamp, str(result.inserted_id))
+			db.session.add(paste)
+			db.session.commit()
+		except:
+			result = mongodb["pastes"].delete_one({'_id': ObjectId(result.inserted_id)})
+			return make_response(jsonify({'error': 'Can not insert'}), 404)
 
-	return jsonify({
-		"url": hashUrl
-		})
+		return jsonify({
+			"url": hashUrl
+			})
+	else:
+		return make_response(jsonify({'error': 'Can not insert'}), 404)
 
 @app.errorhandler(404)
 def not_found(error):
